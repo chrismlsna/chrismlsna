@@ -45,77 +45,13 @@ class MainActivity : AppCompatActivity() {
             if (sStr.isEmpty()) { s = 0 } else { s = sStr.toInt() }
 
             Log.d("onCreate", "calling recursive routine")
-            val resultArray : Array<Int>? = findRandomSetOfIntsWithGivenSum(m, n, r, s)
+            val util = SetsOfIntsUtil()
+            util.debugOn()
+            val resultArray : Array<Int>? = util.findRandomSetOfIntsWithGivenSum(m, n, r, s)
 
             Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
         }
     }
-
-    // returns null if impossible
-    fun findRandomSetOfIntsWithGivenSum(sum : Int, numInts: Int, floor: Int, ceiling: Int): Array<Int>? {
-        var resultArray = findRandomSetOfIntsWithGivenSumRecurse(sum, numInts, floor, ceiling)
-
-        Log.d("MAIN", "### RESULT: ###")
-        for (i in 0 until resultArray.size) {
-            Log.d( "MAIN",i.toString() + ": " + resultArray?.get(i).toString() )
-        }
-        Log.d("MAIN", "RESULT sum = " + resultArray.sum())
-
-        var resultArrayNullable : Array<Int>? = null
-        if( resultArray.size > 0) {
-            resultArrayNullable = resultArray
-        }
-        return resultArrayNullable
-    }
-
-    private fun findRandomSetOfIntsWithGivenSumRecurse(sum : Int, numInts: Int, floor: Int, ceiling: Int): Array<Int> {
-        Log.d("MAIN ", "M=" + sum.toString() + " N=" + numInts.toString() +
-                    " R=" + floor.toString() + " S=" + ceiling.toString() )
-        lateinit var resultArray : Array<Int>
-
-        if (numInts < 1) {
-            Log.d("MAIN ", "ERROR numInts < 1")
-            //resultArray = Array(1) { i -> -9999 }
-            resultArray = arrayOf<Int>()
-        } else if (sum < numInts * r || sum > numInts * s) {
-            //resultArray = Array(1) { i -> -9999 }
-            resultArray = arrayOf<Int>()
-        } else if (numInts == 1) {
-            Log.d("MAIN ", "base case")
-            resultArray = Array(1) { i -> sum }
-        } else {
-            // Split numInts into two N's .. the first being 1 higher iff numInts is odd
-            val secondNumInts = numInts / 2
-            val firstNumInts = numInts - secondNumInts  // always >= secondNumInts
-
-            Log.d(
-                "MAIN ",
-                "N1=" + firstNumInts.toString() + " N2=" + secondNumInts.toString()
-            )
-            val secondFloor = floor * secondNumInts
-            val secondCeiling = ceiling * secondNumInts
-            val firstFloor = maxOf(floor * firstNumInts, sum - secondCeiling)
-            val firstCeiling = minOf(ceiling * firstNumInts, sum - secondFloor)
-            val firstRange = firstFloor..firstCeiling
-            val secondRange = secondFloor..secondCeiling
-            Log.d("MAIN ", "firstRange " + firstRange.toString())
-            Log.d("MAIN ", "secondRange " + secondRange.toString())
-
-            val firstSum = firstRange.random()
-            val secondSum = sum - firstSum
-            Log.d(
-                "MAIN ","Loop iter M1=" + firstSum.toString() + " M2=" + secondSum.toString()
-            )
-
-            val firstArray = findRandomSetOfIntsWithGivenSumRecurse(
-                firstSum, firstNumInts, floor, ceiling )
-
-            val secondArray = findRandomSetOfIntsWithGivenSumRecurse(
-                secondSum, secondNumInts, floor, ceiling )
-            resultArray = firstArray + secondArray
-        }
-        return resultArray
-    }  // end recursive function
 
     // var foo: SortedSet<Int> = SortedSet()
     //var bar = SortedList<Int>
