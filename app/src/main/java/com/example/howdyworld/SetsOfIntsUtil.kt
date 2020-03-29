@@ -39,9 +39,9 @@ class SetsOfIntsUtil {
 
         debugOn()
 
-        debugPrint("### RESULT: ###")
-        for (i in 0 until resultArray.size) {
-            debugPrint( i.toString() + ": " + resultArray?.get(i).toString() )
+        debugPrint("### RESULT: ### array size = " + resultArray.size.toString())
+        for (i in 0..(resultArray.size - 1)) {
+            debugPrint( i.toString() + ": " + resultArray.get(i).toString() )
         }
         debugPrint("RESULT sum = " + resultArray.sum())
 
@@ -76,8 +76,8 @@ class SetsOfIntsUtil {
             debugPrint("No possible set of ints satisfy the conditions.", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
         } else if (numInts == 1) {
-            debugPrint("base case", indent)
-            resultArray = arrayOf<Int>()   // we'll return empty array
+            debugPrint("base case -- sum = " + sum.toString(), indent)
+            resultArray = Array(1) { i -> sum }   // we'll return empty array
         } else {
             // Split numInts into two N's .. the first being 1 higher iff numInts is odd
             val secondNumInts = numInts / 2
