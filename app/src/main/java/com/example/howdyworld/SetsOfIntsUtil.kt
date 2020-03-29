@@ -7,8 +7,10 @@ class SetsOfIntsUtil {
     //----------------------------------
     //  constants
     //----------------------------------
-    private val TAG: String = "SetsOfIntsUtil"  // tag for debug prints
-    private var debug = false       // if false, blocks debug prints to Log.d
+    /** Label for debug prints */
+    private val TAG: String = "SetsOfIntsUtil"
+    /** If false, blocks debug prints to Log.d */
+    private var debug = false
     
     //----------------------------------
     //  data
@@ -32,15 +34,13 @@ class SetsOfIntsUtil {
      * @return  An array of ints that add up to the given sum. If no possible
      *          list exists, then null will be returned.
      */
-    fun findRandomSetOfIntsWithGivenSum(
+    public fun findRandomSetOfIntsWithGivenSum(
         sum : Int, numInts: Int, floor: Int, ceiling: Int): Array<Int>? {
 
         val resultArray = findRandomSetOfIntsWithGivenSumRecurse(sum, numInts, floor, ceiling, "")
 
-        debugOn()
-
         debugPrint("### RESULT: ### array size = " + resultArray.size.toString())
-        for (i in 0..(resultArray.size - 1)) {
+        for (i in resultArray.indices) {
             debugPrint( i.toString() + ": " + resultArray.get(i).toString() )
         }
         debugPrint("RESULT sum = " + resultArray.sum())
@@ -54,9 +54,28 @@ class SetsOfIntsUtil {
         return resultArrayNullable
     }
 
-    /**
+    /***
+     * Same as the _AsArray version above, but returns an ArrayList.
+     * The list will be empty if the conditions are impossible to satisfy.
+     */
+    public fun findRandomSetOfIntsWithGivenSumAsList(
+        sum : Int, numInts: Int, floor: Int, ceiling: Int): ArrayList<Int> {
+
+        val resultArray : Array<Int>? = findRandomSetOfIntsWithGivenSum(
+            sum, numInts, floor, ceiling)
+        var resultList : ArrayList<Int> = ArrayList()
+
+        if( resultArray != null)  {
+            for (element in resultArray) {
+                resultList.add(element)
+            }
+        }
+        return resultList
+    }
+        /**
      * Same as the public non-recursive non-recursive function -- except that this
      * returns an empty list rather than null if no set of ints can satisfy the conditions.
+     * Also the indent string parameter is added to indent debug prints.
      */
     private fun findRandomSetOfIntsWithGivenSumRecurse(
         sum : Int, numInts: Int, floor: Int, ceiling: Int, indent : String): Array<Int> {
@@ -76,32 +95,34 @@ class SetsOfIntsUtil {
             debugPrint("No possible set of ints satisfy the conditions.", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
         } else if (numInts == 1) {
-            debugPrint("base case -- sum = " + sum.toString(), indent)
+            debugPrint("base case -- sum = $sum", indent)
             resultArray = Array(1) { i -> sum }   // we'll return empty array
         } else {
             // Split numInts into two N's .. the first being 1 higher iff numInts is odd
             val secondNumInts = numInts / 2
             val firstNumInts = numInts - secondNumInts  // always >= secondNumInts
 
-            debugPrint("N1=" + firstNumInts.toString() + " N2=" + secondNumInts.toString(), indent )
+            debugPrint("N1=$firstNumInts N2=$secondNumInts", indent )
             val secondFloor = floor * secondNumInts
             val secondCeiling = ceiling * secondNumInts
             val firstFloor = maxOf(floor * firstNumInts, sum - secondCeiling)
             val firstCeiling = minOf(ceiling * firstNumInts, sum - secondFloor)
             val firstRange = firstFloor..firstCeiling
             val secondRange = secondFloor..secondCeiling
-            debugPrint("firstRange " + firstRange.toString(), indent)
-            debugPrint("secondRange " + secondRange.toString(), indent)
+            debugPrint("firstRange $firstRange", indent)
+            debugPrint("secondRange $secondRange", indent)
 
             val firstSum = firstRange.random()
             val secondSum = sum - firstSum
-            debugPrint("Loop iter M1=" + firstSum.toString() + " M2=" + secondSum.toString(), indent)
+            debugPrint("Loop iter M1=$firstSum M2=$secondSum", indent)
 
             val firstArray = findRandomSetOfIntsWithGivenSumRecurse(
-                firstSum, firstNumInts, floor, ceiling, indent + "  ")
+                firstSum, firstNumInts, floor, ceiling, "$indent  "
+            )
 
             val secondArray = findRandomSetOfIntsWithGivenSumRecurse(
-                secondSum, secondNumInts, floor, ceiling, indent + "  " )
+                secondSum, secondNumInts, floor, ceiling, "$indent  "
+            )
 
             resultArray = firstArray + secondArray
         }
