@@ -100,34 +100,60 @@ class SetsOfIntsUtil {
             debugPrint("base case -- sum = $sum", indent)
             resultArray = Array(1) { i -> sum }   // return an array with one element, sum
         } else {
-            // Split numInts into ~half .. the first being 1 higher iff numInts is odd
+            /*
+            Split numInts into ~half .. the first being 1 higher iff numInts is odd.
+            We're gonna then make two recursive calls based on these first and second N's.
+            Call firstNumInts N1 and secondNumInts N2.
+            The idea is that there must be a solution to the given function parameters
+            That involves a set of N1 integers that sums to *something* and a second set
+            of N2 integers that will, added to it, result in the requested sum.
+            */
             val secondNumInts = numInts / 2
             val firstNumInts = numInts - secondNumInts  // always >= secondNumInts
             debugPrint("N1=$firstNumInts N2=$secondNumInts", indent )
 
-            // find possible range of
+            // Find the possible range of values that the second set could sum to.
             val secondFloor = floor * secondNumInts
             val secondCeiling = ceiling * secondNumInts
+            val secondRange = secondFloor..secondCeiling
+
+            // Find the possible range of ints in the first set. Like the second set
+            // above, it has high and low limits based simply as the the number of
+            // ints and the range of ints we have to choose from.
+            // But we make a second restriction using the max() funtion
+            // which makes sure the range only includes values that can possibly
+            // work with the range of the second summed set.
             val firstFloor = maxOf(floor * firstNumInts, sum - secondCeiling)
             val firstCeiling = minOf(ceiling * firstNumInts, sum - secondFloor)
             val firstRange = firstFloor..firstCeiling
-            //val secondRange = secondFloor..secondCeiling
-            debugPrint("firstRange $firstRange", indent)
-            //debugPrint("secondRange $secondRange", indent)
-            debugPrint("secondRange $secondFloor..$secondCeiling", indent)
 
+            debugPrint("firstRange $firstRange", indent)
+            debugPrint("secondRange $secondRange", indent)
+
+            // We're only looking for a single randomly-chosen solution.
+            // So we pick a random value for the firstSum.
+            // TODO -- this results in making outlier integers more common in
+            // the solution. Imagine our random value lands on the max value --
+            // then *all* the integers in the recursive solution for that will
+            // be equal to the original function parameter ceiling, and those
+            // in the other set will all be floor. So find a way to make middle
+            // choices much more likely for numInts more than a handfull, and
+            // especially when it's way more than a handful.
             val firstSum = firstRange.random()
             val secondSum = sum - firstSum
             debugPrint("Loop iter M1=$firstSum M2=$secondSum", indent)
 
+            // Recursively obtain a random set of ints for the first set.
             val firstArray = findRandomSetOfIntsWithGivenSumRecurse(
                 firstSum, firstNumInts, floor, ceiling, "$indent  "
             )
 
+            // Recursively obtain a random set of ints for the second set.
             val secondArray = findRandomSetOfIntsWithGivenSumRecurse(
                 secondSum, secondNumInts, floor, ceiling, "$indent  "
             )
 
+            // Combine the two sets.
             resultArray = firstArray + secondArray
         }
         return resultArray
