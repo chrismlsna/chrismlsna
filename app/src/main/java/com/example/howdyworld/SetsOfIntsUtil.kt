@@ -179,28 +179,11 @@ class SetsOfIntsUtil {
         return resultArray
     }  // end recursive function
 
-    public fun debugOn() {
-        debug = true
-    }
-
-    public fun debugOff() {
-        debug = false
-    }
-
-    public fun printErrorsOn() {
-        printErrors = true
-    }
-
-    public fun printErrorsOff() {
-        printErrors = false
-    }
-
-
     /**
-     * If the class member var "debug" is true, prints text to Log.d, preceded by the class
-     * member constant TAG and a space char. If debug is false, this does nothing.
-     * @param text  The string to be printed.
-     */
+    * If the class member var "debug" is true, prints text to Log.d, preceded by the class
+    * member constant TAG and a space char. If debug is false, this does nothing.
+    * @param text  The string to be printed.
+    */
     private fun debugPrint (text : String) {
         if (debug) {
             Log.d(TAG, text)
