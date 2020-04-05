@@ -85,29 +85,39 @@ class SetsOfIntsUtil {
         debugPrint("M=" + sum.toString() + " N=" + numInts.toString() +
                 " R=" + floor.toString() + " S=" + ceiling.toString(), indent )
 
+        // Error case -- numInts < 1
         if (numInts < 1) {
             debugPrint("ERROR: numInts < 1", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
+
+        // Error case -- floor > ceiling
         } else if ( floor > ceiling ) {
             debugPrint("ERROR: floor > ceiling", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
+
+        // Error case -- sum is not achievable.
         } else if (sum < numInts * floor || sum > numInts * ceiling) {
             // If we're here, there's no possible set of of numInts ints in floor..ceiling
             // that add up to sum.
             debugPrint("ERROR: No possible set of ints satisfy the conditions.", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
-        } else if (numInts == 1) {   // this is the non-error base case for the recursion
+
+        // Base case. numInts is 1, so return one int that equals sum.
+        // (With the error cases above, sum must be in floor..ceiling!)
+        } else if (numInts == 1) {
             debugPrint("base case -- sum = $sum", indent)
             resultArray = Array(1) { i -> sum }   // return an array with one element, sum
+
+        /*
+        Final case. Split numInts into ~half .. the first being 1 higher iff numInts is odd.
+        Call firstNumInts N1 and secondNumInts N2.
+        We're gonna then make two recursive calls based on these first and second N's.
+        The idea is that there must be a solution to the given function parameters
+        that involves a set of N1 integers that sums to *something* and a second set
+        of N2 integers that will, added to it, result in the requested sum.
+        */
         } else {
-            /*
-            Split numInts into ~half .. the first being 1 higher iff numInts is odd.
-            We're gonna then make two recursive calls based on these first and second N's.
-            Call firstNumInts N1 and secondNumInts N2.
-            The idea is that there must be a solution to the given function parameters
-            That involves a set of N1 integers that sums to *something* and a second set
-            of N2 integers that will, added to it, result in the requested sum.
-            */
+            // Find values for the two new xNumInts which sum to numInts.
             val secondNumInts = numInts / 2
             val firstNumInts = numInts - secondNumInts  // always >= secondNumInts
             debugPrint("N1=$firstNumInts N2=$secondNumInts", indent )
@@ -118,7 +128,7 @@ class SetsOfIntsUtil {
             val secondRange = secondFloor..secondCeiling
 
             // Find the possible range of ints in the first set. Like the second set
-            // above, it has high and low limits based simply as the the number of
+            // above, it has high and low limits based simply on the the number of
             // ints and the range of ints we have to choose from.
             // But we make a second restriction using the max() funtion
             // which makes sure the range only includes values that can possibly
@@ -138,7 +148,7 @@ class SetsOfIntsUtil {
             // be equal to the original function parameter ceiling, and those
             // in the other set will all be floor. So find a way to make middle
             // choices much more likely for numInts more than a handfull, and
-            // especially when it's way more than a handful.
+            // *especially* when it's way more than a handful. END TODO
             val firstSum = firstRange.random()
             val secondSum = sum - firstSum
             debugPrint("Loop iter M1=$firstSum M2=$secondSum", indent)
