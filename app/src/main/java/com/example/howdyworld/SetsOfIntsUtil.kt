@@ -80,37 +80,41 @@ class SetsOfIntsUtil {
     private fun findRandomSetOfIntsWithGivenSumRecurse(
         sum : Int, numInts: Int, floor: Int, ceiling: Int, indent : String): Array<Int> {
 
+        lateinit var resultArray : Array<Int>   // this will be returned
+
         debugPrint("M=" + sum.toString() + " N=" + numInts.toString() +
                 " R=" + floor.toString() + " S=" + ceiling.toString(), indent )
-        lateinit var resultArray : Array<Int>
 
         if (numInts < 1) {
-            debugPrint("ERROR numInts < 1", indent)
+            debugPrint("ERROR: numInts < 1", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
         } else if ( floor > ceiling ) {
-            debugPrint("floor > ceiling", indent)
+            debugPrint("ERROR: floor > ceiling", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
         } else if (sum < numInts * floor || sum > numInts * ceiling) {
-            // If we're here, there's no possible set of of numInts ints in floor..ceiling that add up to sum.
-            debugPrint("No possible set of ints satisfy the conditions.", indent)
+            // If we're here, there's no possible set of of numInts ints in floor..ceiling
+            // that add up to sum.
+            debugPrint("ERROR: No possible set of ints satisfy the conditions.", indent)
             resultArray = arrayOf<Int>()   // we'll return empty array
-        } else if (numInts == 1) {
+        } else if (numInts == 1) {   // this is the non-error base case for the recursion
             debugPrint("base case -- sum = $sum", indent)
-            resultArray = Array(1) { i -> sum }   // we'll return empty array
+            resultArray = Array(1) { i -> sum }   // return an array with one element, sum
         } else {
-            // Split numInts into two N's .. the first being 1 higher iff numInts is odd
+            // Split numInts into ~half .. the first being 1 higher iff numInts is odd
             val secondNumInts = numInts / 2
             val firstNumInts = numInts - secondNumInts  // always >= secondNumInts
-
             debugPrint("N1=$firstNumInts N2=$secondNumInts", indent )
+
+            // find possible range of
             val secondFloor = floor * secondNumInts
             val secondCeiling = ceiling * secondNumInts
             val firstFloor = maxOf(floor * firstNumInts, sum - secondCeiling)
             val firstCeiling = minOf(ceiling * firstNumInts, sum - secondFloor)
             val firstRange = firstFloor..firstCeiling
-            val secondRange = secondFloor..secondCeiling
+            //val secondRange = secondFloor..secondCeiling
             debugPrint("firstRange $firstRange", indent)
-            debugPrint("secondRange $secondRange", indent)
+            //debugPrint("secondRange $secondRange", indent)
+            debugPrint("secondRange $secondFloor..$secondCeiling", indent)
 
             val firstSum = firstRange.random()
             val secondSum = sum - firstSum
