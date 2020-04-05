@@ -10,7 +10,9 @@ class SetsOfIntsUtil {
     /** Label for debug prints */
     private val TAG: String = "SetsOfIntsUtil"
     /** If false, blocks debug prints to Log.d */
-    private var debug = false
+    public var debug = false
+    /** If false, blocks error prints to Log.d */
+    public var printErrors = true
     
     //----------------------------------
     //  data
@@ -72,8 +74,9 @@ class SetsOfIntsUtil {
         }
         return resultList
     }
-        /**
-     * Same as the public non-recursive non-recursive function -- except that this
+
+    /**
+     * Same as the public non-recursive function -- except that this
      * returns an empty list rather than null if no set of ints can satisfy the conditions.
      * Also the indent string parameter is added to indent debug prints.
      */
@@ -120,7 +123,7 @@ class SetsOfIntsUtil {
             // Find values for the two new xNumInts which sum to numInts.
             val secondNumInts = numInts / 2
             val firstNumInts = numInts - secondNumInts  // always >= secondNumInts
-            debugPrint("N1=$firstNumInts N2=$secondNumInts", indent )
+            debugPrint("N1=$firstNumInts N2=$secondNumInts", indent)
 
             // Find the possible range of values that the second set could sum to.
             val secondFloor = floor * secondNumInts
@@ -163,9 +166,16 @@ class SetsOfIntsUtil {
                 secondSum, secondNumInts, floor, ceiling, "$indent  "
             )
 
-            // Combine the two sets.
-            resultArray = firstArray + secondArray
+            // Combine the two sets. If either is zero length, there was
+            // an error -- so return an empty list.
+            if (firstArray.isEmpty() || secondArray.isEmpty()) {
+                errorPrint("ERROR: Propagating error up the chain.", indent)
+                resultArray = arrayOf<Int>()
+            } else {
+                resultArray = firstArray + secondArray
+            }
         }
+
         return resultArray
     }  // end recursive function
 
@@ -176,6 +186,15 @@ class SetsOfIntsUtil {
     public fun debugOff() {
         debug = false
     }
+
+    public fun printErrorsOn() {
+        printErrors = true
+    }
+
+    public fun printErrorsOff() {
+        printErrors = false
+    }
+
 
     /**
      * If the class member var "debug" is true, prints text to Log.d, preceded by the class
@@ -189,6 +208,12 @@ class SetsOfIntsUtil {
     }
 
     /**
+     * If the class member var "debug" or "printErrors" is true, prints text to Log.d,
+     * preceded by the class member constant TAG and a space char.
+     * If debug and printErrors are false, this does nothing.
+     * @param text  The string to be printed.
+     */
+    /**
      * If the class member var "debug" is true, prints text to Log.d, preceded by the class
      * member constant TAG, a space char, and indentChars. If debug is false, this fun does nothing.
      * @param text         The string to be printed.
@@ -198,7 +223,19 @@ class SetsOfIntsUtil {
      */
     private fun debugPrint (text : String, indentChars : String) {
         if (debug) {
-            Log.d(TAG, " " + indentChars + text)
+            Log.d(TAG, indentChars + text)
+        }
+    }
+
+    private fun errorPrint (text : String) {
+        if (debug || printErrors) {
+            debugPrint(text)
+        }
+    }
+
+    private fun errorPrint( text : String, indentChars : String) {
+        if (debug || printErrors) {
+            debugPrint( indentChars + text)
         }
     }
 

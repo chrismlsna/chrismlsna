@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("onCreate", "calling recursive routine")
             val util = SetsOfIntsUtil()
-            util.debugOn()
+            util.debug = true
             val resultArray : Array<Int>? = util.findRandomSetOfIntsWithGivenSum(m, n, r, s)
 
             Toast.makeText(this, "Done!", Toast.LENGTH_SHORT).show()
